@@ -1,0 +1,21 @@
+{
+  "name": "instagram-hashtags",
+  "version": "1.0.0",
+  "description": "Draft for a simple tool to get relating hashtags from instagram",
+  "author": "Julian Rabe",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "browserify": "^16.5.1",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-sass": "^4.1.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-strip-css-comments": "^2.0.0",
+    "gulp-terser": "^1.2.0",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "htmlparser2": "^4.1.0"
+  }
+}
