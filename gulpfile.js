@@ -71,7 +71,8 @@ gulp.task(
     gulp.parallel(
         gulp.series(
             sassDev,
-            watchSass),
+            watchSass
+        ),
         gulp.series(
             doBrowserify,
             watchJs
