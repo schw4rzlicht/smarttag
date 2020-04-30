@@ -1,7 +1,7 @@
 {
-  "name": "instagram-hashtags",
+  "name": "instatag",
   "version": "1.0.0",
-  "description": "Draft for a simple tool to get relating hashtags from instagram",
+  "description": "Instatag is a little tool to get relative hashtags for your next Instagram post!",
   "author": "Julian Rabe",
   "license": "UNLICENSED",
   "devDependencies": {
