@@ -38,7 +38,7 @@ function doBrowserify() {
 }
 
 function html() {
-    return gulp.src('src/html/**/*.html')
+    return gulp.src('src/**/*.html')
         .pipe(gulp.dest('dist'));
 }
 
