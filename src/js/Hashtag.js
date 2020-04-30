@@ -38,7 +38,11 @@ function getHashtag(hashtag) {
                     }
                 }
 
-                resolve(new Hashtag(dataObject));
+                if(dataObject !== undefined) {
+                    resolve(new Hashtag(dataObject));
+                } else {
+                    reject("Something went wrong while fetching #" + hashtag);
+                }
             });
         }).on("error", err => reject(err));
     });
