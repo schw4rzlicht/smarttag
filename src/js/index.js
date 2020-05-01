@@ -54,7 +54,12 @@ function setProgressBar(value) {
 }
 
 function expectedRequests(depth) {
-    return depth >= 0 ? Math.pow(10, depth) + expectedRequests(depth - 1) : 0;
+    if (depth < 0) {
+        return 0;
+    } else if (depth === 0) {
+        return 1;
+    }
+    return 10 * Math.pow(9, depth - 1) + expectedRequests(depth - 1);
 }
 
 $("#hashtag").focus();
