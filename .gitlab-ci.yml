@@ -39,8 +39,7 @@ validate:html:
   stage: validate
   image: validator/validator:latest
   script:
-    - /vnu-runtime-image/bin/vnu index.html
-  needs: []
+    - /vnu-runtime-image/bin/vnu dist/index.html
 
 deploy:development:
   stage: deploy
