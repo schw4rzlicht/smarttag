@@ -1,5 +1,5 @@
 const Hashtag = require("./Hashtag.js");
-const RequestCounter = require("./RequestCounter");
+const ObservableInteger = require("./ObservableInteger.js");
 
 const recursionDepth = 2;
 
@@ -82,7 +82,7 @@ $("#hashtagSearchForm").submit(event => {
 
     let expected = expectedRequests(recursionDepth);
 
-    let requestCounter = new RequestCounter();
+    let requestCounter = new ObservableInteger();
     requestCounter.addListener(current => setProgressBar(Math.round(current / expected * 100)));
 
     Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter)   // TODO Make recursive depth changeable

@@ -119,7 +119,7 @@ exports.getHashtagsRecursively = function (startingHashtag, depth, counter) {
                 .catch(reason => reject(reason))
                 .then(() => {
                     if (requestCounter != null) {
-                        requestCounter.add();
+                        requestCounter.increment();
                     }
                 });
         });
