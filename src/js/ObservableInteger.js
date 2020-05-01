@@ -1,7 +1,7 @@
 class ObservableInteger {
 
     constructor(value) {
-        this.value = 0;
+        this.value = value;
         this.listeners = [];
     }
 
