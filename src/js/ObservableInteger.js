@@ -9,6 +9,10 @@ class ObservableInteger {
         this.set(this.value + 1);
     }
 
+    decrement() {
+        this.set(this.value - 1);
+    }
+
     substract(value) {
         this.set(this.value - value);
     }
@@ -18,6 +22,10 @@ class ObservableInteger {
         for (const listener of this.listeners) {
             listener(this.value);
         }
+    }
+
+    get() {
+        return this.value;
     }
 
     addListener(listener) {

@@ -4,6 +4,7 @@ const cheerio = require("cheerio");
 let requests = [];
 let stopQueueWorker = false;
 let requestCounter = null;
+let expectedReq = null;
 
 const Hashtag = function (rawData) {
     this.name = rawData.entry_data.TagPage[0].graphql.hashtag.name;
@@ -86,8 +87,9 @@ function workOnQueue() {
     }
 }
 
-exports.getHashtagsRecursively = function (startingHashtag, depth, counter) {
+exports.getHashtagsRecursively = function (startingHashtag, depth, counter, expected) {
 
+    expectedReq = expected;
     requestCounter = counter;
     let hashtags = new Map();
 
@@ -102,9 +104,16 @@ exports.getHashtagsRecursively = function (startingHashtag, depth, counter) {
                     hashtags.set(hashtag.name, hashtag);
 
                     if (++level <= depth) {
+
+                        if(hashtag.related.length < 10 && expectedReq !== null) {
+                            expectedReq.substract(10 - hashtag.related.length);
+                        }
+
                         for (const rel of hashtag.related) {
                             if (!hashtags.has(rel)) {
                                 promises.push(recurse(rel, level));
+                            } else if(expectedReq !== null) {
+                                expectedReq.decrement();
                             }
                         }
                         Promise.all(promises)

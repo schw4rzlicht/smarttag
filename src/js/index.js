@@ -80,12 +80,15 @@ $("#hashtagSearchForm").submit(event => {
         sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
     }
 
-    let expected = expectedRequests(recursionDepth);
-
+    let expected = new ObservableInteger(expectedRequests(recursionDepth));
     let requestCounter = new ObservableInteger();
-    requestCounter.addListener(current => setProgressBar(Math.round(current / expected * 100)));
 
-    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter)   // TODO Make recursive depth changeable
+    expected.addListener(expected => setProgressBar(Math.round(requestCounter.get() / expected * 100)));
+    requestCounter.addListener(current => setProgressBar(Math.round(current / expected.get() * 100)));
+
+    console.log("Expecting " + expected.get() + " requests.");
+
+    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter, expected)   // TODO Make recursive depth changeable
         .then(result => {
             populateResultPage(result);
             hide($("#inputForm, #progressBarContainer"));
