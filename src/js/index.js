@@ -81,18 +81,27 @@ $("#hashtag").focus();
 $("#hashtagSearchForm").submit(event => {
     event.preventDefault();
 
-    setProgressBar(0);
+    $(".alert").alert("close");
 
     let hashtag = $("#hashtag");
+
+    let sanitizedInput = hashtag.val().trim();
+    if (sanitizedInput.substring(0, 1) === "#") {
+        sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
+    }
+
+    if(sanitizedInput === "") {
+        showError("You have to define a hashtag to search for!");
+        hashtag.val("");
+        hashtag.focus();
+        return;
+    }
+
+    setProgressBar(0);
     hashtag.prop("disabled", true);
 
     hide($("#inputFormSubmit"));
     show($("#progressBarContainer"));
-
-    let sanitizedInput = hashtag.val();
-    if (sanitizedInput.substring(0, 1) === "#") {
-        sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
-    }
 
     let expected = new ObservableInteger(expectedRequests(recursionDepth));
     let requestCounter = new ObservableInteger(0);
