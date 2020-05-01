@@ -43,7 +43,7 @@ function html() {
 }
 
 function watchSass() {
-    return gulp.watch('src/css/**/*.scss',
+    return gulp.watch('src/scss/**/*.scss',
         gulp.series(
             sassDev
         )
