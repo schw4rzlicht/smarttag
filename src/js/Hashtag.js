@@ -70,7 +70,11 @@ function getHashtag(hashtag) {
     });
 }
 
-function workOnQueue(idleTime) {
+function getRandomIdleTime() {
+    return Math.floor(Math.random() * 3000) + 1000;
+}
+
+function workOnQueue() {
     if (requests.length > 0) {
         requests.shift()();
     }
@@ -78,11 +82,11 @@ function workOnQueue(idleTime) {
         stopQueueWorker = false;
         requests = [];
     } else {
-        setTimeout(() => workOnQueue(idleTime), idleTime);
+        setTimeout(() => workOnQueue(), getRandomIdleTime());
     }
 }
 
-exports.getHashtagsRecursively = function (startingHashtag, depth, idleTime, counter) {
+exports.getHashtagsRecursively = function (startingHashtag, depth, counter) {
 
     requestCounter = counter;
     let hashtags = new Map();
@@ -127,7 +131,7 @@ exports.getHashtagsRecursively = function (startingHashtag, depth, idleTime, cou
             .catch(reason => reject(reason))
             .then(() => stopQueueWorker = true);
 
-        setTimeout(() => workOnQueue(idleTime), idleTime);
+        setTimeout(() => workOnQueue(), getRandomIdleTime());
     });
 }
 

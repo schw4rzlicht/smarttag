@@ -80,7 +80,7 @@ $("#hashtagSearchForm").submit(event => {
     let requestCounter = new RequestCounter();
     requestCounter.addListener(current => setProgressBar(Math.round(current / expected * 100)));
 
-    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, 1000, requestCounter)   // TODO Make recursive depth changeable
+    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter)   // TODO Make recursive depth changeable
         .then(result => {
             populateResultPage(result);
             hide($("#inputForm, #progressBarContainer"));
