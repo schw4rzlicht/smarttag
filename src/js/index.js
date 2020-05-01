@@ -55,7 +55,7 @@ $("#hashtagSearchForm").submit(event => {
         sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
     }
 
-    Hashtag.getHashtagsRecursively(sanitizedInput, 2)   // TODO Make recursive depth changeable
+    Hashtag.getHashtagsRecursively(sanitizedInput, 2, 1000)   // TODO Make recursive depth changeable
         .then(result => {
             populateResultPage(result);
             hide($("#inputForm, #inputFormSpinner"));

@@ -3,6 +3,7 @@ const cheerio = require("cheerio");
 
 let requests = [];
 let requestsResolved = 0;
+let stopQueueWorker = false;
 
 const Hashtag = function (rawData) {
     this.name = rawData.entry_data.TagPage[0].graphql.hashtag.name;
@@ -70,7 +71,19 @@ function getHashtag(hashtag) {
     });
 }
 
-exports.getHashtagsRecursively = function (startingHashtag, depth) {
+function workOnQueue(idleTime) {
+    if(requests.length > 0) {
+        requests.shift()();
+    }
+    if (stopQueueWorker) {
+        stopQueueWorker = false;
+        requests = [];
+    } else {
+        setTimeout(() => workOnQueue(idleTime), idleTime);
+    }
+}
+
+exports.getHashtagsRecursively = function (startingHashtag, depth, idleTime) {
 
     let hashtags = new Map();
 
@@ -80,7 +93,7 @@ exports.getHashtagsRecursively = function (startingHashtag, depth) {
 
             let promises = [];
 
-            getHashtag(hashtag)
+            getHashtagWithQueue(hashtag)
                 .then(hashtag => {
                     hashtags.set(hashtag.name, hashtag);
 
@@ -106,7 +119,10 @@ exports.getHashtagsRecursively = function (startingHashtag, depth) {
     return new Promise((resolve, reject) => {
         recurse(startingHashtag, 0)
             .then(result => resolve(Array.from(result.values())))
-            .catch(reason => reject(reason));
+            .catch(reason => reject(reason))
+            .then(() => stopQueueWorker = true);
+
+        setTimeout(() => workOnQueue(idleTime), idleTime);
     });
 }
 
