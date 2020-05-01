@@ -76,7 +76,7 @@ $("#hashtagSearchForm").submit(event => {
     }
 
     let expected = new ObservableInteger(expectedRequests(recursionDepth));
-    let requestCounter = new ObservableInteger();
+    let requestCounter = new ObservableInteger(0);
 
     expected.addListener(expected => setProgressBar(Math.round(requestCounter.get() / expected * 100)));
     requestCounter.addListener(current => setProgressBar(Math.round(current / expected.get() * 100)));
