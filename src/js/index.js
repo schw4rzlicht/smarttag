@@ -1,7 +1,9 @@
 const Hashtag = require("./Hashtag.js");
 const ObservableInteger = require("./ObservableInteger.js");
+const humanizeDuration = require("humanize-duration");
 
 const recursionDepth = 2;
+const recursionDepthElement = $("#recursionDepth");
 
 function hide(elements) {
     elements.addClass("d-none");
@@ -57,6 +59,23 @@ function expectedRequests(depth) {
     return depth >= 0 ? Math.pow(10, depth) + expectedRequests(depth - 1) : 0;
 }
 
+function expectedRequestsWithoutDuplicates(depth) {
+    if (depth < 0) {
+        return 0;
+    } else if (depth === 0) {
+        return 1;
+    }
+    return 10 * Math.pow(9, depth - 1) + expectedRequestsWithoutDuplicates(depth - 1);
+}
+
+function updateApproximations() {
+    let depth = parseInt(recursionDepthElement.val());
+    let expectedRequests = expectedRequestsWithoutDuplicates(depth);
+    $("#maximumRequests").html(expectedRequests);
+    $("#duration").html(humanizeDuration(Hashtag.MINIMUM_WAITTIME * expectedRequests) + " up to " +
+        humanizeDuration(Hashtag.MAXIMUM_WAITTIME * expectedRequests));
+}
+
 $("#hashtag").focus();
 
 $("#hashtagSearchForm").submit(event => {
@@ -101,3 +120,9 @@ $("#retryButton").click(() => {
     show($("#inputForm"));
     $("#hashtag").focus();
 });
+
+recursionDepthElement.change(() => {
+    updateApproximations();
+});
+
+updateApproximations();

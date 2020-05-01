@@ -148,3 +148,5 @@ exports.getHashtagsRecursively = function (startingHashtag, depth, counter, expe
 }
 
 exports.getHashtag = getHashtag;
+exports.MINIMUM_WAITTIME = MINIMUM_WAITTIME;
+exports.MAXIMUM_WAITTIME = MAXIMUM_WAITTIME;

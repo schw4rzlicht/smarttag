@@ -27,8 +27,19 @@
                     href="https://instagram.com">Instagram</a>! Just give it a try!</p>
             <form id="hashtagSearchForm">
                 <div class="form-group text-left">
-                    <label for="hashtag"></label>
+                    <label for="hashtag">Hashtag</label>
                     <input type="text" class="form-control" id="hashtag" placeholder="#hashtag">
+                </div>
+                <div class="form-group text-left">
+                    <label for="recursionDepth">Recursion depth</label>
+                    <select class="form-control" id="recursionDepth">
+                        <option>0</option>
+                        <option>1</option>
+                        <option selected>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                    </select>
+                    Maximum requests: <span id="maximumRequests"></span>, duration: <span id="duration"></span>
                 </div>
                 <button type="submit" class="btn btn-primary" id="inputFormSubmit">Go!</button>
                 <div class="text-left d-none" id="progressBarContainer">
