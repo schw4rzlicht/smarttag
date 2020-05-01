@@ -14,20 +14,40 @@
 </head>
 
 <body>
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="masthead mb-auto">
+        <h3>Instatag</h3>
+        <div id="errorMessage"></div>
+    </header>
 
-<noscript>
-    <h1>Welcome!</h1>
-    <br>
-    <p>Unfortunately it seems like you have JavaScript disabled.</p>
-    <p>Please turn it on and reload the website.</p>
-</noscript>
-
-<div class="cover-container">
-    <main role="main" class="inner cover">
-        <h1 class="cover-heading">Welcome to Instatag!</h1>
-        <p class="lead">Instatag is a tool to provide you with the best hashtags for your next post on <a
-                href="https://instagram.com">Instagram</a>! Just give it a try!</p>
+    <main role="main" class="inner cover text-center">
+        <div id="inputForm">
+            <h1 class="cover-heading">Welcome to Instatag!</h1>
+            <p class="lead">Instatag is a tool to provide you with the best hashtags for your next post on <a
+                    href="https://instagram.com">Instagram</a>! Just give it a try!</p>
+            <form id="hashtagSearchForm">
+                <div class="form-group text-left">
+                    <label for="hashtag"></label>
+                    <input type="text" class="form-control" id="hashtag" placeholder="#hashtag">
+                </div>
+                <button type="submit" class="btn btn-primary" id="inputFormSubmit">Go!</button>
+                <div class="spinner-border d-none" role="status" id="inputFormSpinner">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </form>
+        </div>
+        <div id="result" class="d-none">
+            <h1 class="cover-heading">Found these hashtags:</h1>
+            <p id="hashtagListing"></p>
+            <button type="button" class="btn btn-primary" id="retryButton">Retry!</button>
+        </div>
     </main>
+
+    <footer class="mastfoot mt-auto">
+        <div class="inner">
+            <p>Empty for now.</p>
+        </div>
+    </footer>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"
