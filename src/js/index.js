@@ -60,11 +60,15 @@ function expectedRequests(depth) {
 $("#hashtag").focus();
 
 $("#hashtagSearchForm").submit(event => {
-    hide($("#inputFormSubmit"));
-    show($("#progressBarContainer"));
     event.preventDefault();
 
-    let sanitizedInput = $("#hashtag").val();
+    hide($("#inputFormSubmit"));
+    show($("#progressBarContainer"));
+
+    let hashtag = $("#hashtag");
+    hashtag.prop("disabled", true);
+
+    let sanitizedInput = hashtag.val();
     if(sanitizedInput.substring(0, 1) === "#") {
         sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
     }
@@ -86,7 +90,10 @@ $("#hashtagSearchForm").submit(event => {
             hide($("#progressBarContainer"));
             show($("#inputFormSubmit"));
         })
-        .then(() => setProgressBar(0));
+        .then(() => {
+            $("#hashtag").prop("disabled", false);
+            setProgressBar(0)
+        });
 });
 
 $("#retryButton").click(() => {

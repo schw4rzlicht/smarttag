@@ -31,10 +31,13 @@
                     <input type="text" class="form-control" id="hashtag" placeholder="#hashtag">
                 </div>
                 <button type="submit" class="btn btn-primary" id="inputFormSubmit">Go!</button>
-                <div class="progress d-none" id="progressBarContainer">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"
-                         id="progressBar"></div>
+                <div class="text-left d-none" id="progressBarContainer">
+                    Fetching...
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
+                             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"
+                             id="progressBar"></div>
+                    </div>
                 </div>
             </form>
         </div>
