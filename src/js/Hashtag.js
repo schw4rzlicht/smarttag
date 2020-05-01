@@ -1,6 +1,9 @@
 const https = require("https");
 const cheerio = require("cheerio");
 
+let requests = [];
+let requestsResolved = 0;
+
 const Hashtag = function (rawData) {
     this.name = rawData.entry_data.TagPage[0].graphql.hashtag.name;
     this.weight = rawData.entry_data.TagPage[0].graphql.hashtag.edge_hashtag_to_media.count;
@@ -11,49 +14,59 @@ const Hashtag = function (rawData) {
     }
 }
 
-function getHashtag(hashtag) {
+function resolveRequest(hashtag, resolve, reject) {
 
-    return new Promise((resolve, reject) => {
+    https.get("https://www.instagram.com/explore/tags/" + hashtag + "/", res => {
 
-        https.get("https://www.instagram.com/explore/tags/" + hashtag + "/", res => {
+        let chunks = [];
 
-            let chunks = [];
-
-            if(res.statusCode !== 200) {
-                if(res.statusCode === 429) {
-                    reject("Too many requests! Instagram locked us out!");
-                } else {
-                    reject("Received HTTP Status " + res.statusCode + " when fetching hashtags!");
-                }
-                return;
+        if (res.statusCode !== 200) {
+            if (res.statusCode === 429) {
+                reject("Too many requests! Instagram locked us out!");
+            } else {
+                reject("Received HTTP Status " + res.statusCode + " when fetching hashtags!");
             }
+            return;
+        }
 
-            res.on("data", data => {
-                chunks += data;
-            });
+        res.on("data", data => {
+            chunks += data;
+        });
 
-            res.on("end", () => {
+        res.on("end", () => {
 
-                const $$ = cheerio.load(chunks);
-                const scripts = $$("script");
-                let dataObject;
-                for (let i = 0; i < scripts.length; i++) {
-                    if (scripts[i].children !== undefined && scripts[i].children.length > 0) {
-                        if (scripts[i].children[0].data.startsWith("window._sharedData")) {
-                            dataObject = JSON.parse(scripts[i].children[0].data
-                                .substring(0, scripts[i].children[0].data.length - 1)
-                                .replace("window._sharedData = ", ""));
-                        }
+            const $$ = cheerio.load(chunks);
+            const scripts = $$("script");
+            let dataObject;
+            for (let i = 0; i < scripts.length; i++) {
+                if (scripts[i].children !== undefined && scripts[i].children.length > 0) {
+                    if (scripts[i].children[0].data.startsWith("window._sharedData")) {
+                        dataObject = JSON.parse(scripts[i].children[0].data
+                            .substring(0, scripts[i].children[0].data.length - 1)
+                            .replace("window._sharedData = ", ""));
                     }
                 }
+            }
 
-                if(dataObject !== undefined) {
-                    resolve(new Hashtag(dataObject));
-                } else {
-                    reject("Something went wrong while fetching #" + hashtag);
-                }
-            });
-        }).on("error", err => reject(err)).end();
+            if (dataObject !== undefined) {
+                resolve(new Hashtag(dataObject));
+            } else {
+                reject("Something went wrong while fetching #" + hashtag);
+            }
+        });
+    }).on("error", err => reject(err)).end();
+    requestsResolved++;
+}
+
+function getHashtagWithQueue(hashtag) {
+    return new Promise((resolve, reject) => {
+        requests.push(() => resolveRequest(hashtag, resolve, reject));
+    });
+}
+
+function getHashtag(hashtag) {
+    return new Promise((resolve, reject) => {
+            resolveRequest(hashtag, resolve, reject);
     });
 }
 
