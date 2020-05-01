@@ -45,7 +45,7 @@ deploy:development:
   stage: deploy
   script:
     - apt-get update && apt-get -y install rsync
-    - rsync -rtvchhO --delete --delete-excluded --force dist /var/www/sandbox.ju1es.de/instatag
+    - rsync -rtvchhO --delete --delete-excluded --force dist/ /var/www/sandbox.ju1es.de/instatag/
   only:
     - development
   dependencies:
