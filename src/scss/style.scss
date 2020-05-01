@@ -9,18 +9,41 @@ a:hover {
   color: #fff;
 }
 
-/* Custom default button */
+/*
+ * Overriding defaults
+ */
+
 .btn-primary,
 .btn-primary:hover,
-.btn-primary:focus {
+.btn-primary:focus,
+.btn-primary:active {
   color: #333;
   text-shadow: none; /* Prevent inheritance from `body` */
   background-color: #fff;
   border: .05rem solid #fff;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+.show > .btn-primary.dropdown-toggle {
+  color: #333;
+  background-color: #aaa;
+  border: .05rem solid #fff;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+.btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
+.show > .btn-primary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
 }
 
 .bg-primary {
   background-color: #6c757d !important;
+}
+
+.form-control:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
 }
 
 /*
