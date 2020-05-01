@@ -29,7 +29,7 @@ function populateResultPage(results) {
     for (const result of results) {
 
         let related = "<i>none</i>";
-        if(result.related !== undefined && result.related.length > 0) {
+        if (result.related !== undefined && result.related.length > 0) {
             related = result.related.join(", ");
         }
 
@@ -39,7 +39,7 @@ function populateResultPage(results) {
             "</ul></p>";
     }
 
-    if(content === "") {
+    if (content === "") {
         content = "<i>none</i>";
     }
 
@@ -47,10 +47,10 @@ function populateResultPage(results) {
 }
 
 function setProgressBar(value) {
-    let bar = $("#progressBar");
-    bar.attr("aria-valuenow", value);
-    bar.css("width", value > 0 ? value + "%": "0");
-    bar.html(value + "%");
+    $("#progressBar")
+        .attr("aria-valuenow", value)
+        .css("width", value > 0 ? value + "%" : "0")
+        .html(value + "%");
 }
 
 function expectedRequests(depth) {
@@ -62,14 +62,16 @@ $("#hashtag").focus();
 $("#hashtagSearchForm").submit(event => {
     event.preventDefault();
 
-    hide($("#inputFormSubmit"));
-    show($("#progressBarContainer"));
+    setProgressBar(0);
 
     let hashtag = $("#hashtag");
     hashtag.prop("disabled", true);
 
+    hide($("#inputFormSubmit"));
+    show($("#progressBarContainer"));
+
     let sanitizedInput = hashtag.val();
-    if(sanitizedInput.substring(0, 1) === "#") {
+    if (sanitizedInput.substring(0, 1) === "#") {
         sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
     }
 
@@ -90,10 +92,7 @@ $("#hashtagSearchForm").submit(event => {
             hide($("#progressBarContainer"));
             show($("#inputFormSubmit"));
         })
-        .then(() => {
-            $("#hashtag").prop("disabled", false);
-            setProgressBar(0);
-        });
+        .then(() => hashtag.prop("disabled", false));
 });
 
 $("#retryButton").click(() => {
