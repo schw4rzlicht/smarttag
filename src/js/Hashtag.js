@@ -1,6 +1,9 @@
 const https = require("https");
 const cheerio = require("cheerio");
 
+const MINIMUM_WAITTIME = 1000;
+const MAXIMUM_WAITTIME = 3000;
+
 let requests = [];
 let stopQueueWorker = false;
 let requestCounter = null;
@@ -72,7 +75,7 @@ function getHashtag(hashtag) {
 }
 
 function getRandomIdleTime() {
-    return Math.floor(Math.random() * 3000) + 1000;
+    return Math.floor(Math.random() * MAXIMUM_WAITTIME) + MINIMUM_WAITTIME;
 }
 
 function workOnQueue() {
