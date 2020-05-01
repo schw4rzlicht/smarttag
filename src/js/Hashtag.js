@@ -15,9 +15,18 @@ function getHashtag(hashtag) {
 
     return new Promise((resolve, reject) => {
 
-        https.get("https://www.instagram.com/explore/tags/" + hashtag + "/", {}, res => {
+        https.get("https://www.instagram.com/explore/tags/" + hashtag + "/", res => {
 
             let chunks = [];
+
+            if(res.statusCode !== 200) {
+                if(res.statusCode === 429) {
+                    reject("Too many requests! Instagram locked us out!");
+                } else {
+                    reject("Received HTTP Status " + res.statusCode + " when fetching hashtags!");
+                }
+                return;
+            }
 
             res.on("data", data => {
                 chunks += data;
@@ -44,7 +53,7 @@ function getHashtag(hashtag) {
                     reject("Something went wrong while fetching #" + hashtag);
                 }
             });
-        }).on("error", err => reject(err));
+        }).on("error", err => reject(err)).end();
     });
 }
 
