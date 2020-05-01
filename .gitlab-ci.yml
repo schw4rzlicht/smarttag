@@ -1,0 +1,53 @@
+stages:
+  - dependencies
+  - build
+  - validate
+  - deploy
+
+install-dependencies:
+  stage: dependencies
+  image: node:latest
+  cache:
+    key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+    paths:
+      - node_modules/
+  script:
+    - npm ci
+  only:
+    changes:
+      - package-lock.json
+
+build:dev:
+  stage: build
+  image: node:latest
+  cache:
+    key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
+    paths:
+      - node_modules/
+    policy: pull
+  script:
+    - ./node_modules/.bin/gulp buildDev
+  except:
+    - tags
+    - master
+  artifacts:
+    paths:
+      - css/*.css
+      - css/*.css.map
+
+validate:html:
+  stage: validate
+  image: validator/validator:latest
+  script:
+    - /vnu-runtime-image/bin/vnu index.html
+  needs: []
+
+deploy:development:
+  stage: deploy
+  script:
+    - apt-get update && apt-get -y install rsync
+    - rsync -rtvchhO --delete --delete-excluded --force dist /var/www/sandbox.ju1es.de/instatag
+  only:
+    - development
+  dependencies:
+    - build:dev

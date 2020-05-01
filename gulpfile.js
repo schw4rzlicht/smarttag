@@ -88,7 +88,8 @@ gulp.task(
     'buildDev',
     gulp.series(
         sassDev,
-        doBrowserify
+        doBrowserify,
+        html
     )
 );
 
@@ -97,6 +98,7 @@ gulp.task(
     gulp.series(
         sassProduction,
         doBrowserify,
-        minifyJs
+        minifyJs,
+        html
     )
 )
