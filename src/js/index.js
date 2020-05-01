@@ -1,4 +1,7 @@
 const Hashtag = require("./Hashtag.js");
+const RequestCounter = require("./RequestCounter");
+
+const recursionDepth = 2;
 
 function hide(elements) {
     elements.addClass("d-none");
@@ -43,11 +46,22 @@ function populateResultPage(results) {
     $("#hashtagListing").html(content);
 }
 
+function setProgressBar(value) {
+    let bar = $("#progressBar");
+    bar.attr("aria-valuenow", value);
+    bar.css("width", value + "%");
+    bar.html(value + "%");
+}
+
+function expectedRequests(depth) {
+    return depth >= 0 ? Math.pow(10, depth) + expectedRequests(depth - 1) : 0;
+}
+
 $("#hashtag").focus();
 
 $("#hashtagSearchForm").submit(event => {
     hide($("#inputFormSubmit"));
-    show($("#inputFormSpinner"));
+    show($("#progressBarContainer"));
     event.preventDefault();
 
     let sanitizedInput = $("#hashtag").val();
@@ -55,18 +69,24 @@ $("#hashtagSearchForm").submit(event => {
         sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
     }
 
-    Hashtag.getHashtagsRecursively(sanitizedInput, 2, 1000)   // TODO Make recursive depth changeable
+    let expected = expectedRequests(recursionDepth);
+
+    let requestCounter = new RequestCounter();
+    requestCounter.addListener(current => setProgressBar(Math.round(current / expected * 100)));
+
+    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, 1000, requestCounter)   // TODO Make recursive depth changeable
         .then(result => {
             populateResultPage(result);
-            hide($("#inputForm, #inputFormSpinner"));
+            hide($("#inputForm, #progressBarContainer"));
             show($("#result, #inputFormSubmit"));
             $("#hashtag").val(null);
         })
         .catch(reason => {
             showError(reason);
-            hide($("#inputFormSpinner"));
+            hide($("#progressBarContainer"));
             show($("#inputFormSubmit"));
-        });
+        })
+        .then(() => setProgressBar(0));
 });
 
 $("#retryButton").click(() => {

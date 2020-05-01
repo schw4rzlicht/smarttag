@@ -2,8 +2,8 @@ const https = require("https");
 const cheerio = require("cheerio");
 
 let requests = [];
-let requestsResolved = 0;
 let stopQueueWorker = false;
+let requestCounter = null;
 
 const Hashtag = function (rawData) {
     this.name = rawData.entry_data.TagPage[0].graphql.hashtag.name;
@@ -56,7 +56,6 @@ function resolveRequest(hashtag, resolve, reject) {
             }
         });
     }).on("error", err => reject(err)).end();
-    requestsResolved++;
 }
 
 function getHashtagWithQueue(hashtag) {
@@ -67,12 +66,12 @@ function getHashtagWithQueue(hashtag) {
 
 function getHashtag(hashtag) {
     return new Promise((resolve, reject) => {
-            resolveRequest(hashtag, resolve, reject);
+        resolveRequest(hashtag, resolve, reject);
     });
 }
 
 function workOnQueue(idleTime) {
-    if(requests.length > 0) {
+    if (requests.length > 0) {
         requests.shift()();
     }
     if (stopQueueWorker) {
@@ -83,8 +82,9 @@ function workOnQueue(idleTime) {
     }
 }
 
-exports.getHashtagsRecursively = function (startingHashtag, depth, idleTime) {
+exports.getHashtagsRecursively = function (startingHashtag, depth, idleTime, counter) {
 
+    requestCounter = counter;
     let hashtags = new Map();
 
     function recurse(hashtag, level) {
@@ -112,7 +112,12 @@ exports.getHashtagsRecursively = function (startingHashtag, depth, idleTime) {
                         resolve(hashtags);
                     }
                 })
-                .catch(reason => reject(reason));
+                .catch(reason => reject(reason))
+                .then(() => {
+                    if (requestCounter != null) {
+                        requestCounter.add();
+                    }
+                });
         });
     }
 
