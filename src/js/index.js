@@ -49,7 +49,7 @@ function populateResultPage(results) {
 function setProgressBar(value) {
     let bar = $("#progressBar");
     bar.attr("aria-valuenow", value);
-    bar.css("width", value + "%");
+    bar.css("width", value > 0 ? value + "%": "0");
     bar.html(value + "%");
 }
 
@@ -92,7 +92,7 @@ $("#hashtagSearchForm").submit(event => {
         })
         .then(() => {
             $("#hashtag").prop("disabled", false);
-            setProgressBar(0)
+            setProgressBar(0);
         });
 });
 
