@@ -71,6 +71,8 @@ function createBuckets(hashtags) {
                 }
             }
 
+            bucket.hashtags.sort((a, b) => (a.weight > b.weight ? 1 : -1));
+
             buckets.push(bucket);
         }
     } else {
