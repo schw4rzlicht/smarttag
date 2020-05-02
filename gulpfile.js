@@ -34,11 +34,16 @@ function doBrowserify() {
     return browserify({entries: 'src/js/index.js'})
         .bundle()
         .pipe(source('index.js'))
-        .pipe(gulp.dest('dist/js'))
+        .pipe(gulp.dest('dist/js'));
 }
 
 function html() {
     return gulp.src('src/**/*.html')
+        .pipe(gulp.dest('dist'));
+}
+
+function resources() {
+    return gulp.src('resources/dev/**/*')
         .pipe(gulp.dest('dist'));
 }
 
@@ -63,7 +68,15 @@ function watchHtml() {
         gulp.series(
             html
         )
-    )
+    );
+}
+
+function watchResources() {
+    return gulp.watch('resources/dev/**/*',
+        gulp.series(
+            resources
+        )
+    );
 }
 
 gulp.task(
@@ -80,6 +93,10 @@ gulp.task(
         gulp.series(
             html,
             watchHtml
+        ),
+        gulp.series(
+            resources,
+            watchResources
         )
     )
 );
@@ -89,7 +106,8 @@ gulp.task(
     gulp.series(
         sassDev,
         doBrowserify,
-        html
+        html,
+        resources
     )
 );
 
