@@ -5,6 +5,8 @@ const humanizeDuration = require("humanize-duration");
 const recursionDepth = 2;
 const recursionDepthElement = $("#recursionDepth");
 
+let buckets = null;
+
 function hide(elements) {
     elements.addClass("d-none");
 }
@@ -25,27 +27,61 @@ function showError(message) {
     $("#errorMessage").html(error);
 }
 
-function populateResultPage(results) {
+function getBucketHtml(bucketSize, bucketId, hashtags) {
 
-    let content = "";
-    for (const result of results) {
+    let result = "<div id=\"bucket" + bucketId + "\" class=\"bucket\">" +
+        "Min: " + bucketSize.minWeight + ", max: " + bucketSize.maxWeight + "<ul>";
 
-        let related = "<i>none</i>";
-        if (result.related !== undefined && result.related.length > 0) {
-            related = result.related.join(", ");
+    for (const hashtag of hashtags) {
+        if (bucketSize.minWeight <= hashtag.weight && hashtag.weight <= bucketSize.maxWeight) {
+            result += "<li><strong>" + hashtag.name + "</strong> (" + hashtag.weight + ")</li>";
         }
-
-        content += "<p><strong>" + result.name + "</strong><br>" +
-            "Weight: " + result.weight + "<br>" +
-            "Related: " + related +
-            "</ul></p>";
     }
 
-    if (content === "") {
-        content = "<i>none</i>";
+    return result + "</ul></div>";
+}
+
+function getBucketSizes(hashtags) {
+
+    // TODO Find better distribution
+
+    let minWeight = -1;
+    let maxWeight = -1;
+
+    for (const hashtag of hashtags) {
+        if (hashtag.weight < minWeight || minWeight < 0) {
+            minWeight = hashtag.weight;
+        }
+        if (hashtag.weight > maxWeight) {
+            maxWeight = hashtag.weight;
+        }
     }
 
-    $("#hashtagListing").html(content);
+    let bucketSize = Math.floor((maxWeight - minWeight) / 3);
+
+    if (bucketSize > 0) {
+        return [
+            {minWeight: minWeight, maxWeight: minWeight + bucketSize},
+            {minWeight: minWeight + bucketSize + 1, maxWeight: minWeight + 2 * bucketSize},
+            {minWeight: minWeight + 2 * bucketSize + 1, maxWeight: maxWeight}
+        ];
+    } else {
+        return [
+            {minWeight: minWeight, maxWeight: maxWeight}
+        ];
+    }
+}
+
+function populateResultPage(hashtags) {
+
+    let bucketSizes = getBucketSizes(hashtags);
+    let bucketHtml = "";
+
+    for (let i = 0; i < bucketSizes.length; i++) {
+        bucketHtml += getBucketHtml(bucketSizes[i], i, hashtags);
+    }
+
+    $("#buckets").html(bucketHtml);
 }
 
 function setProgressBar(value) {
@@ -90,7 +126,7 @@ $("#hashtagSearchForm").submit(event => {
         sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
     }
 
-    if(sanitizedInput === "") {
+    if (sanitizedInput === "") {
         showError("You have to define a hashtag to search for!");
         hashtag.val("");
         hashtag.focus();
