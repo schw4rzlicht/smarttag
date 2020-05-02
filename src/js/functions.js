@@ -30,13 +30,19 @@ function getBucketHtml(bucketId) {
         "data-target='#collapseBucket" + bucketId + "' aria-expanded='" + (bucketId === 0 ? "true" : "false") +
         "' aria-controls='collapseBucket" + bucketId + "'>" + BUCKET_RANGES[bucketId].name + "</button></h2></div>" +
         "<div id='collapseBucket" + bucketId + "' class='collapse" + (bucketId === 0 ? " show" : "") + "' " +
-        "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'><ul>";
+        "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'>";
 
-    for (const hashtag of buckets[bucketId]) {
+    if(buckets[bucketId].length > 0) {
+        result += "<ul>";
+        for (const hashtag of buckets[bucketId]) {
             result += "<li><strong>" + hashtag.name + "</strong> (" + hashtag.weight + ")</li>";
+        }
+        result += "</ul>";
+    } else {
+        result += "<i>none</i>";
     }
 
-    return result + "</ul></div></div></div>";
+    return result + "</div></div></div>";
 }
 
 function createBuckets(hashtags) {
