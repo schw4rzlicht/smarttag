@@ -49,7 +49,7 @@ $("#hashtagSearchForm").submit(event => {
     expected.addListener(expected => _.setProgressBar(Math.round(requestCounter.get() / expected * 100)));
     requestCounter.addListener(current => _.setProgressBar(Math.round(current / expected.get() * 100)));
 
-    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter, expected)   // TODO Make recursive depth changeable
+    Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter, expected)
         .then(results => _.gotoResultPage(results))
         .catch(reason => {
             _.showError(reason);
