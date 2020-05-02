@@ -18,7 +18,7 @@ let buckets = null;
  * Internal functions
  */
 
-function getBucketHtml(bucketSize, bucketId, showBucket, hashtags) {
+function getBucketHtml(bucketSize, bucketId, showBucket) {
 
     let result = "<div id='bucket" + bucketId + "' class='card'>" +
         "<div class='card-header' id='headingBucket" + bucketId + "'>" +
@@ -30,10 +30,8 @@ function getBucketHtml(bucketSize, bucketId, showBucket, hashtags) {
         "<div id='collapseBucket" + bucketId + "' class='collapse" + (showBucket ? " show" : "") + "' " +
         "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'><ul>";
 
-    for (const hashtag of hashtags) {
-        if (bucketSize.minWeight <= hashtag.weight && hashtag.weight <= bucketSize.maxWeight) {
+    for (const hashtag of bucketSize.hashtags) {
             result += "<li><strong>" + hashtag.name + "</strong> (" + hashtag.weight + ")</li>";
-        }
     }
 
     return result + "</ul></div></div></div>";
@@ -60,12 +58,20 @@ function createBuckets(hashtags) {
     if (bucketSize > 0) {
         buckets = [];
         for (let i = 0; i < MAX_BUCKETS; i++) {
-            buckets.push(
-                {
-                    minWeight: minWeight + bucketSize * i + (i > 0 ? 1 : 0),
-                    maxWeight: minWeight + bucketSize * (i + 1)
+
+            let bucket = {
+                minWeight: minWeight + bucketSize * i + (i > 0 ? 1 : 0),
+                maxWeight: minWeight + bucketSize * (i + 1),
+                hashtags: []
+            };
+
+            for (const hashtag of hashtags) {
+                if(bucket.minWeight <= hashtag.weight && hashtag.weight <= bucket.maxWeight) {
+                    bucket.hashtags.push(hashtag);
                 }
-            );
+            }
+
+            buckets.push(bucket);
         }
     } else {
         buckets = [{minWeight: minWeight, maxWeight: maxWeight}];
@@ -84,10 +90,10 @@ function expectedRequestsWithoutDuplicates(depth) {
 function populateResultPage(hashtags) {
 
     createBuckets(hashtags);
-    let bucketHtml = "";
 
+    let bucketHtml = "";
     for (let i = 0; i < buckets.length; i++) {
-        bucketHtml += getBucketHtml(buckets[i], i, buckets.length === 1, hashtags);
+        bucketHtml += getBucketHtml(buckets[i], i, buckets.length === 1);
     }
 
     $("#buckets").html(bucketHtml);
