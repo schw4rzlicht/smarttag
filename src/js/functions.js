@@ -1,7 +1,17 @@
 const humanizeDuration = require("humanize-duration");
 const Hashtag = require("./Hashtag.js");
 
-let buckets = null;
+/*
+ * Constants
+ */
+
+const urlParams = new URLSearchParams(window.location.search);
+
+/*
+ * Variables
+ */
+
+let bucketSizes = null;
 
 /*
  * Internal functions
@@ -61,29 +71,9 @@ function expectedRequestsWithoutDuplicates(depth) {
     return 10 * Math.pow(9, depth - 1) + expectedRequestsWithoutDuplicates(depth - 1);
 }
 
-/*
- * Internal and exposed functions
- */
+function populateResultPage(hashtags) {
 
-exports.expectedRequests = function expectedRequests(depth) {
-    return depth >= 0 ? Math.pow(10, depth) + expectedRequests(depth - 1) : 0;
-}
-
-/*
- * Exposed functions
- */
-
-exports.updateApproximations = function() {
-    let depth = parseInt($("#recursionDepth").val());
-    let expectedRequests = expectedRequestsWithoutDuplicates(depth);
-    $("#maximumRequests").html(expectedRequests);
-    $("#duration").html(humanizeDuration(Hashtag.MINIMUM_WAITTIME * expectedRequests) + " up to " +
-        humanizeDuration(Hashtag.MAXIMUM_WAITTIME * expectedRequests));
-}
-
-exports.populateResultPage = function(hashtags) {
-
-    let bucketSizes = getBucketSizes(hashtags);
+    bucketSizes = getBucketSizes(hashtags);
     let bucketHtml = "";
 
     for (let i = 0; i < bucketSizes.length; i++) {
@@ -93,22 +83,49 @@ exports.populateResultPage = function(hashtags) {
     $("#buckets").html(bucketHtml);
 }
 
-exports.setProgressBar = function(value) {
+/*
+ * Internal and exposed functions
+ */
+
+exports.expectedRequests = function expectedRequests(depth) {
+    return depth >= 0 ? Math.pow(10, depth) + expectedRequests(depth - 1) : 0;
+}
+
+exports.gotoResultPage = function gotoResultPage(results) {
+    populateResultPage(results);
+    this.hide($("#inputForm, #progressBarContainer"));
+    this.show($("#result, #inputFormSubmit"));
+    $("#hashtag").val(null);
+}
+
+/*
+ * Exposed functions
+ */
+
+exports.updateApproximations = function () {
+    let depth = parseInt($("#recursionDepth").val());
+    let expectedRequests = expectedRequestsWithoutDuplicates(depth);
+    $("#maximumRequests").html(expectedRequests);
+    $("#duration").html(humanizeDuration(Hashtag.MINIMUM_WAITTIME * expectedRequests) + " up to " +
+        humanizeDuration(Hashtag.MAXIMUM_WAITTIME * expectedRequests));
+}
+
+exports.setProgressBar = function (value) {
     $("#progressBar")
         .attr("aria-valuenow", value)
         .css("width", value > 0 ? value + "%" : "0")
         .html(value + "%");
 }
 
-exports.hide = function(elements) {
+exports.hide = function (elements) {
     elements.addClass("d-none");
 }
 
-exports.show = function(elements) {
+exports.show = function (elements) {
     elements.removeClass("d-none");
 }
 
-exports.showError = function(message) {
+exports.showError = function (message) {
 
     console.error(message);
 
@@ -118,4 +135,11 @@ exports.showError = function(message) {
         "<span aria-hidden=\"true\">&times;</span></button></div>";
 
     $("#errorMessage").html(error);
+}
+
+exports.checkDebug = function () {
+    if (urlParams.get("skipRequests") !== null) {
+        $.getJSON("hashtags.json", results => this.gotoResultPage(results))
+            .fail(err => console.err("Error loading hashtags.json from server: " + err));
+    }
 }

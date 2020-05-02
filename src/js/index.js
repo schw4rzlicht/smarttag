@@ -50,12 +50,7 @@ $("#hashtagSearchForm").submit(event => {
     requestCounter.addListener(current => _.setProgressBar(Math.round(current / expected.get() * 100)));
 
     Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter, expected)   // TODO Make recursive depth changeable
-        .then(result => {
-            _.populateResultPage(result);
-            _.hide($("#inputForm, #progressBarContainer"));
-            _.show($("#result, #inputFormSubmit"));
-            $("#hashtag").val(null);
-        })
+        .then(results => _.gotoResultPage(results))
         .catch(reason => {
             _.showError(reason);
             _.hide($("#progressBarContainer"));
@@ -75,3 +70,4 @@ $("#recursionDepth").change(() => {
 });
 
 _.updateApproximations();
+_.checkDebug();
