@@ -139,7 +139,9 @@ exports.showError = function (message) {
 
 exports.checkDebug = function () {
     if (urlParams.get("skipRequests") !== null) {
-        $.getJSON("hashtags.json", results => this.gotoResultPage(results))
-            .fail(err => console.err("Error loading hashtags.json from server: " + err));
+        $.getJSON("hashtags.json", results => {
+            console.log("[DEBUG] Skipping requests...");
+            this.gotoResultPage(results);
+        }).fail(err => console.err("Error loading hashtags.json from server: " + err));
     }
 }
