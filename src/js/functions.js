@@ -5,7 +5,11 @@ const Hashtag = require("./Hashtag.js");
  * Constants
  */
 
-const MAX_BUCKETS = 3;
+const BUCKET_RANGES = [
+    { name: "up to 100000 uses", criteria: weight => weight <= 100000 },
+    { name: "up to 1000000 uses", criteria: weight => 100000 < weight && weight <= 1000000 },
+    { name: "above 1000000 uses", criteria: weight => 1000000 < weight }
+];
 const urlParams = new URLSearchParams(window.location.search);
 
 /*
@@ -18,19 +22,17 @@ let buckets = null;
  * Internal functions
  */
 
-function getBucketHtml(bucketSize, bucketId, showBucket) {
+function getBucketHtml(bucketId) {
 
     let result = "<div id='bucket" + bucketId + "' class='card'>" +
         "<div class='card-header' id='headingBucket" + bucketId + "'>" +
         "<h2 class='mb-0'><button class='btn btn-link' type='button' data-toggle='collapse' " +
-        "data-target='#collapseBucket" + bucketId + "' aria-expanded='" + (showBucket ? "true" : "false") +
-        "' aria-controls='collapseBucket" + bucketId + "'>" +
-        "Hashtag bucket " + (bucketId + 1) + " (minimum weight: " + bucketSize.minWeight + ", maximum weight: " +
-        bucketSize.maxWeight + "</button></h2></div>" +
-        "<div id='collapseBucket" + bucketId + "' class='collapse" + (showBucket ? " show" : "") + "' " +
+        "data-target='#collapseBucket" + bucketId + "' aria-expanded='" + (bucketId === 0 ? "true" : "false") +
+        "' aria-controls='collapseBucket" + bucketId + "'>" + BUCKET_RANGES[bucketId].name + "</button></h2></div>" +
+        "<div id='collapseBucket" + bucketId + "' class='collapse" + (bucketId === 0 ? " show" : "") + "' " +
         "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'><ul>";
 
-    for (const hashtag of bucketSize.hashtags) {
+    for (const hashtag of buckets[bucketId]) {
             result += "<li><strong>" + hashtag.name + "</strong> (" + hashtag.weight + ")</li>";
     }
 
@@ -39,44 +41,20 @@ function getBucketHtml(bucketSize, bucketId, showBucket) {
 
 function createBuckets(hashtags) {
 
-    // TODO Find better distribution
+    hashtags.sort((a, b) => a.weight < b.weight ? 1 : -1);
 
-    let minWeight = -1;
-    let maxWeight = -1;
+    buckets = [];
+    for (const bucketRange of BUCKET_RANGES) {
 
-    for (const hashtag of hashtags) {
-        if (hashtag.weight < minWeight || minWeight < 0) {
-            minWeight = hashtag.weight;
-        }
-        if (hashtag.weight > maxWeight) {
-            maxWeight = hashtag.weight;
-        }
-    }
+        let bucket = [];
 
-    let bucketSize = Math.floor((maxWeight - minWeight) / MAX_BUCKETS);
-
-    if (bucketSize > 0) {
-        buckets = [];
-        for (let i = 0; i < MAX_BUCKETS; i++) {
-
-            let bucket = {
-                minWeight: minWeight + bucketSize * i + (i > 0 ? 1 : 0),
-                maxWeight: minWeight + bucketSize * (i + 1),
-                hashtags: []
-            };
-
-            for (const hashtag of hashtags) {
-                if(bucket.minWeight <= hashtag.weight && hashtag.weight <= bucket.maxWeight) {
-                    bucket.hashtags.push(hashtag);
-                }
+        for (const hashtag of hashtags) {
+            if(bucketRange.criteria(hashtag.weight)) {
+                bucket.push(hashtag);
             }
-
-            bucket.hashtags.sort((a, b) => (a.weight > b.weight ? 1 : -1));
-
-            buckets.push(bucket);
         }
-    } else {
-        buckets = [{minWeight: minWeight, maxWeight: maxWeight}];
+
+        buckets.push(bucket);
     }
 }
 
@@ -95,7 +73,7 @@ function populateResultPage(hashtags) {
 
     let bucketHtml = "";
     for (let i = 0; i < buckets.length; i++) {
-        bucketHtml += getBucketHtml(buckets[i], i, buckets.length === 1);
+        bucketHtml += getBucketHtml(i);
     }
 
     $("#buckets").html(bucketHtml);
