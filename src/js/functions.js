@@ -17,10 +17,17 @@ let bucketSizes = null;
  * Internal functions
  */
 
-function getBucketHtml(bucketSize, bucketId, hashtags) {
+function getBucketHtml(bucketSize, bucketId, showBucket, hashtags) {
 
-    let result = "<div id=\"bucket" + bucketId + "\" class=\"bucket\">" +
-        "Min: " + bucketSize.minWeight + ", max: " + bucketSize.maxWeight + "<ul>";
+    let result = "<div id='bucket" + bucketId + "' class='card'>" +
+        "<div class='card-header' id='headingBucket" + bucketId + "'>" +
+        "<h2 class='mb-0'><button class='btn btn-link' type='button' data-toggle='collapse' " +
+        "data-target='#collapseBucket" + bucketId + "' aria-expanded='" + (showBucket ? "true" : "false") +
+        "' aria-controls='collapseBucket" + bucketId + "'>" +
+        "Hashtag bucket " + (bucketId + 1) + " (minimum weight: " + bucketSize.minWeight + ", maximum weight: " +
+        bucketSize.maxWeight + "</button></h2></div>" +
+        "<div id='collapseBucket" + bucketId + "' class='collapse" + (showBucket ? " show" : "") + "' " +
+        "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'><ul>";
 
     for (const hashtag of hashtags) {
         if (bucketSize.minWeight <= hashtag.weight && hashtag.weight <= bucketSize.maxWeight) {
@@ -28,7 +35,7 @@ function getBucketHtml(bucketSize, bucketId, hashtags) {
         }
     }
 
-    return result + "</ul></div>";
+    return result + "</ul></div></div></div>";
 }
 
 function getBucketSizes(hashtags) {
@@ -77,7 +84,7 @@ function populateResultPage(hashtags) {
     let bucketHtml = "";
 
     for (let i = 0; i < bucketSizes.length; i++) {
-        bucketHtml += getBucketHtml(bucketSizes[i], i, hashtags);
+        bucketHtml += getBucketHtml(bucketSizes[i], i, bucketSizes.length === 1, hashtags);
     }
 
     $("#buckets").html(bucketHtml);
