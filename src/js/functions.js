@@ -5,13 +5,14 @@ const Hashtag = require("./Hashtag.js");
  * Constants
  */
 
+const MAX_BUCKETS = 3;
 const urlParams = new URLSearchParams(window.location.search);
 
 /*
  * Variables
  */
 
-let bucketSizes = null;
+let buckets = null;
 
 /*
  * Internal functions
@@ -38,7 +39,7 @@ function getBucketHtml(bucketSize, bucketId, showBucket, hashtags) {
     return result + "</ul></div></div></div>";
 }
 
-function getBucketSizes(hashtags) {
+function createBuckets(hashtags) {
 
     // TODO Find better distribution
 
@@ -54,18 +55,20 @@ function getBucketSizes(hashtags) {
         }
     }
 
-    let bucketSize = Math.floor((maxWeight - minWeight) / 3);
+    let bucketSize = Math.floor((maxWeight - minWeight) / MAX_BUCKETS);
 
     if (bucketSize > 0) {
-        return [
-            {minWeight: minWeight, maxWeight: minWeight + bucketSize},
-            {minWeight: minWeight + bucketSize + 1, maxWeight: minWeight + 2 * bucketSize},
-            {minWeight: minWeight + 2 * bucketSize + 1, maxWeight: maxWeight}
-        ];
+        buckets = [];
+        for (let i = 0; i < MAX_BUCKETS; i++) {
+            buckets.push(
+                {
+                    minWeight: minWeight + bucketSize * i + (i > 0 ? 1 : 0),
+                    maxWeight: minWeight + bucketSize * (i + 1)
+                }
+            );
+        }
     } else {
-        return [
-            {minWeight: minWeight, maxWeight: maxWeight}
-        ];
+        buckets = [{minWeight: minWeight, maxWeight: maxWeight}];
     }
 }
 
@@ -80,11 +83,11 @@ function expectedRequestsWithoutDuplicates(depth) {
 
 function populateResultPage(hashtags) {
 
-    bucketSizes = getBucketSizes(hashtags);
+    createBuckets(hashtags);
     let bucketHtml = "";
 
-    for (let i = 0; i < bucketSizes.length; i++) {
-        bucketHtml += getBucketHtml(bucketSizes[i], i, bucketSizes.length === 1, hashtags);
+    for (let i = 0; i < buckets.length; i++) {
+        bucketHtml += getBucketHtml(buckets[i], i, buckets.length === 1, hashtags);
     }
 
     $("#buckets").html(bucketHtml);
