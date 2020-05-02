@@ -60,6 +60,7 @@ $("#hashtagSearchForm").submit(event => {
 });
 
 $("#retryButton").click(() => {
+    $(".alert").alert("close");
     _.hide($("#result"));
     _.show($("#inputForm"));
     $("#hashtag").focus();
