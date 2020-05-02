@@ -17,7 +17,7 @@ function sassDev() {
 }
 
 function sassProduction() {
-    return gulp.src('src/scss/**/*.scss')
+    return gulp.src('src/scss/style.scss')
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(stripCssComments({preserve: false}))
         .pipe(autoprefixer())
