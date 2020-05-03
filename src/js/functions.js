@@ -32,11 +32,9 @@ function getBucketHtml(bucketId) {
         "<div class='card-body'>";
 
     if(buckets[bucketId].bucket.length > 0) {
-        result += "<ul>";
         for (const hashtag of buckets[bucketId].bucket) {
-            result += "<li><strong>" + hashtag.name + "</strong> (" + hashtag.weight + ")</li>";
+            result += "#" + hashtag.name + "<br>";
         }
-        result += "</ul>";
     } else {
         result += "<i>none</i>";
     }
