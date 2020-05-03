@@ -50,7 +50,7 @@ $("#hashtagSearchForm").submit(event => {
     requestCounter.addListener(current => _.setProgressBar(Math.round(current / expected.get() * 100)));
 
     Hashtag.getHashtagsRecursively(sanitizedInput, recursionDepth, requestCounter, expected)
-        .then(results => _.gotoResultPage(results))
+        .then(results => _.gotoResultPage(sanitizedInput, results))
         .catch(reason => {
             _.showError(reason);
             _.hide($("#progressBarContainer"));
@@ -66,9 +66,8 @@ $("#retryButton").click(() => {
     $("#hashtag").focus();
 });
 
-$("#recursionDepth").change(() => {
-    _.updateApproximations();
-});
+$("#shuffleButton").click(() => _.pickHashtags());
+$("#recursionDepth").change(() => _.updateApproximations());
 
 _.updateApproximations();
 _.checkDebug();

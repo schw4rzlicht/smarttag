@@ -6,17 +6,20 @@ const Hashtag = require("./Hashtag.js");
  */
 
 const BUCKET_RANGES = [
-    { name: "up to 100000 uses", criteria: weight => weight <= 100000 },
-    { name: "up to 1000000 uses", criteria: weight => 100000 < weight && weight <= 1000000 },
-    { name: "above 1000000 uses", criteria: weight => 1000000 < weight }
+    { name: "up to 100000 uses", pick: 0.6, criteria: weight => weight <= 100000 },
+    { name: "up to 1000000 uses", pick: 0.3, criteria: weight => 100000 < weight && weight <= 1000000 },
+    { name: "above 1000000 uses", pick: 0.1, criteria: weight => 1000000 < weight }
 ];
+const RESULTING_HASHTAGS = 10; // TODO Make changeable
+
 const urlParams = new URLSearchParams(window.location.search);
 
 /*
  * Variables
  */
 
-let buckets = null;
+let buckets = BUCKET_RANGES;
+let startingHashtag;
 
 /*
  * Internal functions
@@ -28,13 +31,13 @@ function getBucketHtml(bucketId) {
         "<div class='card-header' id='headingBucket" + bucketId + "'>" +
         "<h2 class='mb-0'><button class='btn btn-link' type='button' data-toggle='collapse' " +
         "data-target='#collapseBucket" + bucketId + "' aria-expanded='" + (bucketId === 0 ? "true" : "false") +
-        "' aria-controls='collapseBucket" + bucketId + "'>" + BUCKET_RANGES[bucketId].name + "</button></h2></div>" +
+        "' aria-controls='collapseBucket" + bucketId + "'>" + buckets[bucketId].name + "</button></h2></div>" +
         "<div id='collapseBucket" + bucketId + "' class='collapse" + (bucketId === 0 ? " show" : "") + "' " +
         "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'>";
 
-    if(buckets[bucketId].length > 0) {
+    if(buckets[bucketId].bucket.length > 0) {
         result += "<ul>";
-        for (const hashtag of buckets[bucketId]) {
+        for (const hashtag of buckets[bucketId].bucket) {
             result += "<li><strong>" + hashtag.name + "</strong> (" + hashtag.weight + ")</li>";
         }
         result += "</ul>";
@@ -49,18 +52,15 @@ function createBuckets(hashtags) {
 
     hashtags.sort((a, b) => a.weight < b.weight ? 1 : -1);
 
-    buckets = [];
-    for (const bucketRange of BUCKET_RANGES) {
+    for (const bucket of buckets) {
 
-        let bucket = [];
+        bucket.bucket = [];
 
         for (const hashtag of hashtags) {
-            if(bucketRange.criteria(hashtag.weight)) {
-                bucket.push(hashtag);
+            if(bucket.criteria(hashtag.weight)) {
+                bucket.bucket.push(hashtag);
             }
         }
-
-        buckets.push(bucket);
     }
 }
 
@@ -83,26 +83,59 @@ function populateResultPage(hashtags) {
     }
 
     $("#buckets").html(bucketHtml);
+
+    exports.pickHashtags();
+}
+
+function shuffle(array) {
+    let j = 0;
+    let temp = null;
+
+    for (let i = array.length - 1; i > 0; i -= 1) {
+
+        j = Math.floor(Math.random() * (i + 1));
+
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
 }
 
 /*
- * Internal and exposed functions
+ * Exposed functions
  */
 
-exports.expectedRequests = function expectedRequests(depth) {
-    return depth >= 0 ? Math.pow(10, depth) + expectedRequests(depth - 1) : 0;
+exports.expectedRequests = function(depth) {
+    return depth >= 0 ? Math.pow(10, depth) + exports.expectedRequests(depth - 1) : 0;
 }
 
-exports.gotoResultPage = function gotoResultPage(results) {
+exports.gotoResultPage = function(startingHashtag, results) {
+    this.startingHashtag = startingHashtag;
     populateResultPage(results);
     this.hide($("#inputForm, #progressBarContainer"));
     this.show($("#result, #inputFormSubmit"));
     $("#hashtag").val(null);
 }
 
-/*
- * Exposed functions
- */
+exports.pickHashtags = function() {
+    for (const bucket of buckets) {
+        shuffle(bucket.bucket);
+    }
+
+    let hashtags = ["#" + this.startingHashtag];
+    for (const bucket of buckets) {
+        for (let i = 0; i < Math.round(RESULTING_HASHTAGS * bucket.pick); i++) {
+            let randomHashtag = bucket.bucket[i];
+            if(randomHashtag !== undefined) {
+                hashtags.push("#" + randomHashtag.name);
+            } else {
+                break;
+            }
+        }
+    }
+
+    $("#resultingHashtags").html(hashtags.join("\n"));
+}
 
 exports.updateApproximations = function () {
     let depth = parseInt($("#recursionDepth").val());
@@ -143,7 +176,7 @@ exports.checkDebug = function () {
     if (urlParams.get("skipRequests") !== null) {
         $.getJSON("hashtags.json", results => {
             console.log("[DEBUG] Skipping requests...");
-            this.gotoResultPage(results);
+            this.gotoResultPage(results[0].name, results);
         }).fail(err => console.err("Error loading hashtags.json from server: " + err));
     }
 }
