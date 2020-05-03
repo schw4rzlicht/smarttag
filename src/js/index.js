@@ -71,5 +71,16 @@ $("#retryButton").click(() => {
 $("#shuffleButton").click(() => _.pickHashtags());
 $("#recursionDepth").change(() => _.updateApproximations());
 
+_.attachClipboardMessageHandlers(new ClipboardJS("#clipboardWithoutLinebreaks", {
+    text: () => {
+        return $("#resultingHashtags").text().replace(/\n/g, " ");
+    }
+}));
+_.attachClipboardMessageHandlers(new ClipboardJS("#clipboardWithLinebreaks", {
+    text: () => {
+        return $("#resultingHashtags").text();
+    }
+}));
+
 _.updateApproximations();
 _.checkDebug();

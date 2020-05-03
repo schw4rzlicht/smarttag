@@ -28,12 +28,8 @@ let startingHashtag;
 function getBucketHtml(bucketId) {
 
     let result = "<div id='bucket" + bucketId + "' class='card'>" +
-        "<div class='card-header' id='headingBucket" + bucketId + "'>" +
-        "<h2 class='mb-0'><button class='btn btn-link' type='button' data-toggle='collapse' " +
-        "data-target='#collapseBucket" + bucketId + "' aria-expanded='" + (bucketId === 0 ? "true" : "false") +
-        "' aria-controls='collapseBucket" + bucketId + "'>" + buckets[bucketId].name + "</button></h2></div>" +
-        "<div id='collapseBucket" + bucketId + "' class='collapse" + (bucketId === 0 ? " show" : "") + "' " +
-        "aria-labelledby='headingBucket" + bucketId + "' data-parent='#buckets'><div class='card-body'>";
+        "<div class='card-header'>" + buckets[bucketId].name + "</div>" +
+        "<div class='card-body'>";
 
     if(buckets[bucketId].bucket.length > 0) {
         result += "<ul>";
@@ -45,7 +41,7 @@ function getBucketHtml(bucketId) {
         result += "<i>none</i>";
     }
 
-    return result + "</div></div></div>";
+    return result + "</div></div>";
 }
 
 function createBuckets(hashtags) {
@@ -99,6 +95,21 @@ function shuffle(array) {
         array[i] = array[j];
         array[j] = temp;
     }
+}
+
+function postClipboardMessage(message, clazz) {
+    let clipboardMessage = $("#clipboardMessage");
+    clipboardMessage
+        .text(message)
+        .addClass(clazz);
+    setTimeout(() => {
+        clipboardMessage.fadeOut("slow", () => {
+            clipboardMessage
+                .text(null)
+                .removeClass(clazz)
+                .show();
+        });
+    }, 5000);
 }
 
 /*
@@ -179,4 +190,10 @@ exports.checkDebug = function () {
             this.gotoResultPage(results[0].name, results);
         }).fail(err => console.err("Error loading hashtags.json from server: " + err));
     }
+}
+
+exports.attachClipboardMessageHandlers = function(clipboard) {
+    clipboard
+        .on("success", () => postClipboardMessage("Copied!", "text-success"))
+        .on("error", () => postClipboardMessage("Copy failed!", "text-danger"));
 }
