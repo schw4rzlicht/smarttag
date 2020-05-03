@@ -38,7 +38,9 @@ $("#hashtagSearchForm").submit(event => {
     }
 
     _.setProgressBar(0);
-    hashtag.prop("disabled", true);
+
+    let formElements = $("#hashtag, #recursionDepth");
+    formElements.prop("disabled", true);
 
     _.hide($("#inputFormSubmit"));
     _.show($("#progressBarContainer"));
@@ -56,7 +58,7 @@ $("#hashtagSearchForm").submit(event => {
             _.hide($("#progressBarContainer"));
             _.show($("#inputFormSubmit"));
         })
-        .then(() => hashtag.prop("disabled", false));
+        .then(() => formElements.prop("disabled", false));
 });
 
 $("#retryButton").click(() => {
