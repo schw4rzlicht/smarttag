@@ -6,9 +6,9 @@ const Hashtag = require("./Hashtag.js");
  */
 
 const BUCKET_RANGES = [
-    { name: "up to 100000 uses", pick: 0.6, criteria: weight => weight <= 100000 },
-    { name: "up to 1000000 uses", pick: 0.3, criteria: weight => 100000 < weight && weight <= 1000000 },
-    { name: "more than 1000000 uses", pick: 0.1, criteria: weight => 1000000 < weight }
+    {name: "up to 100000 uses", pick: 0.6, criteria: weight => weight <= 100000},
+    {name: "up to 1000000 uses", pick: 0.3, criteria: weight => 100000 < weight && weight <= 1000000},
+    {name: "more than 1000000 uses", pick: 0.1, criteria: weight => 1000000 < weight}
 ];
 const RESULTING_HASHTAGS = 10; // TODO Make changeable
 
@@ -31,7 +31,7 @@ function getBucketHtml(bucketId) {
         "<div class='card-header'>" + buckets[bucketId].name + "</div>" +
         "<div class='card-body'>";
 
-    if(buckets[bucketId].bucket.length > 0) {
+    if (buckets[bucketId].bucket.length > 0) {
         for (const hashtag of buckets[bucketId].bucket) {
             result += "#" + hashtag.name + "<br>";
         }
@@ -51,7 +51,7 @@ function createBuckets(hashtags) {
         bucket.bucket = [];
 
         for (const hashtag of hashtags) {
-            if(bucket.criteria(hashtag.weight)) {
+            if (bucket.criteria(hashtag.weight)) {
                 bucket.bucket.push(hashtag);
             }
         }
@@ -114,11 +114,11 @@ function postClipboardMessage(message, clazz) {
  * Exposed functions
  */
 
-exports.expectedRequests = function(depth) {
+exports.expectedRequests = function (depth) {
     return depth >= 0 ? Math.pow(10, depth) + exports.expectedRequests(depth - 1) : 0;
 }
 
-exports.gotoResultPage = function(startingHashtag, results) {
+exports.gotoResultPage = function (startingHashtag, results) {
     this.startingHashtag = startingHashtag;
     populateResultPage(results);
     this.hide($("#inputForm, #progressBarContainer"));
@@ -126,17 +126,22 @@ exports.gotoResultPage = function(startingHashtag, results) {
     $("#hashtag").val(null);
 }
 
-exports.pickHashtags = function() {
+exports.pickHashtags = function () {
     for (const bucket of buckets) {
         shuffle(bucket.bucket);
     }
 
     let hashtags = ["#" + this.startingHashtag];
     for (const bucket of buckets) {
-        for (let i = 0; i < Math.round(RESULTING_HASHTAGS * bucket.pick); i++) {
+        let amount = Math.round(RESULTING_HASHTAGS * bucket.pick);
+        for (let i = 0; i < amount; i++) {
             let randomHashtag = bucket.bucket[i];
-            if(randomHashtag !== undefined) {
-                hashtags.push("#" + randomHashtag.name);
+            if (randomHashtag !== undefined) {
+                if (randomHashtag.name === this.startingHashtag) {
+                    amount++;
+                } else {
+                    hashtags.push("#" + randomHashtag.name);
+                }
             } else {
                 break;
             }
@@ -190,7 +195,7 @@ exports.checkDebug = function () {
     }
 }
 
-exports.attachClipboardMessageHandlers = function(clipboard) {
+exports.attachClipboardMessageHandlers = function (clipboard) {
     clipboard
         .on("success", () => postClipboardMessage("Copied!", "text-success"))
         .on("error", () => postClipboardMessage("Copy failed!", "text-danger"));

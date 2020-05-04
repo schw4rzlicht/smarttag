@@ -25,10 +25,7 @@ $("#hashtagSearchForm").submit(event => {
 
     let hashtag = $("#hashtag");
 
-    let sanitizedInput = hashtag.val().trim();
-    if (sanitizedInput.substring(0, 1) === "#") {
-        sanitizedInput = sanitizedInput.substring(1, sanitizedInput.length + 1);
-    }
+    let sanitizedInput = hashtag.val().replace(/\W/g, "");
 
     if (sanitizedInput === "") {
         _.showError("You have to define a hashtag to search for!");
