@@ -1,6 +1,31 @@
 @import "variables.scss";
 
-/* Links */
+/*
+ * Base structure
+ */
+
+html,
+body {
+  height: 100%;
+  background-color: $background-color;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+  color: $text-color;
+  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+}
+
+.cover-container {
+  max-width: 42em;
+}
+
+/*
+ * Overriding links
+ */
+
 a,
 a:focus,
 a:hover {
@@ -8,7 +33,7 @@ a:hover {
 }
 
 /*
- * Overriding defaults
+ * Overriding buttons
  */
 
 .btn-primary,
@@ -39,37 +64,31 @@ a:hover {
   background-color: #6c757d !important;
 }
 
+/*
+ * Overriding forms
+ */
+
 .form-control:focus {
   border-color: $text-color;
   box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
 }
 
 /*
- * Base structure
+ * Overriding cards
  */
 
-html,
-body {
-  height: 100%;
-  background-color: $background-color;
+.card-header {
+  background-color: $card-header-background-color;
 }
 
-body {
-  display: -ms-flexbox;
-  display: flex;
-  color: $text-color;
-  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
-  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+.card-body {
+  background-color: $card-body-background-color;
 }
-
-.cover-container {
-  max-width: 42em;
-}
-
 
 /*
- * Header
+ * Custom
  */
+
 .masthead {
   margin-bottom: 2rem;
 }
@@ -105,10 +124,6 @@ body {
   }
 }
 
-
-/*
- * Cover
- */
 .cover {
   padding: 0 1.5rem;
 }
@@ -117,10 +132,6 @@ body {
   font-weight: 700;
 }
 
-
-/*
- * Footer
- */
 .mastfoot {
   color: rgba(255, 255, 255, .5);
 }
