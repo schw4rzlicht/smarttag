@@ -37,7 +37,8 @@ function getBucketHtml(bucketId) {
     if (buckets[bucketId].bucket.length > 0) {
         result += "<pre><samp>";
         for (const hashtag of buckets[bucketId].bucket) {
-            result += "#" + hashtag.name + "<br>";
+            result += "<a href='https://www.instagram.com/explore/tags/" + hashtag.name + "/' target='_blank'>#" +
+                hashtag.name + "</a><br>";
         }
         result += "</samp></pre>";
     } else {

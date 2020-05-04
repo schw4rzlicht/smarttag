@@ -46,6 +46,12 @@ a:hover {
   color: $link-color;
 }
 
+pre a,
+pre a:focus,
+pre a:hover {
+  color: $text-color;
+}
+
 /*
  * Overriding buttons
  */
