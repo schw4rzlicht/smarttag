@@ -137,7 +137,7 @@ exports.pickHashtags = function () {
         shuffle(bucket.bucket);
     }
 
-    let hashtags = ["#" + this.startingHashtag];
+    let hashtags = ["<u>#" + this.startingHashtag + "</u>"];
     for (const bucket of buckets) {
         let amount = Math.round(RESULTING_HASHTAGS * bucket.pick);
         for (let i = 0; i < amount; i++) {
