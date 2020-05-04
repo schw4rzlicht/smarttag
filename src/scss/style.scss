@@ -59,6 +59,10 @@ h2 a:hover {
   text-decoration: none;
 }
 
+.dropdown-item:active {
+  background-color: $link-color;
+}
+
 /*
  * Overriding buttons
  */
