@@ -36,9 +36,11 @@ function getBucketHtml(bucketId) {
         "data-parent='#buckets'><div class='card-body'>";
 
     if (buckets[bucketId].bucket.length > 0) {
+        result += "<pre><samp>";
         for (const hashtag of buckets[bucketId].bucket) {
             result += "#" + hashtag.name + "<br>";
         }
+        result += "</samp></pre>";
     } else {
         result += "<i>none</i>";
     }
