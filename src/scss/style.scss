@@ -18,8 +18,12 @@ body {
   box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
 }
 
-.cover-container {
-  max-width: 42em;
+/*
+ * Overriding pre
+ */
+
+pre {
+  color: $text-color;
 }
 
 /*
@@ -29,6 +33,12 @@ body {
 a,
 a:focus,
 a:hover {
+  color: $link-color;
+}
+
+.btn-link,
+.btn-link:focus,
+.btn-link:hover {
   color: $link-color;
 }
 
@@ -122,6 +132,10 @@ a:hover {
   .nav-masthead {
     float: right;
   }
+}
+
+.cover-container {
+  max-width: 42em;
 }
 
 .cover {
