@@ -52,6 +52,13 @@ pre a:hover {
   color: $text-color;
 }
 
+h2 a,
+h2 a:focus,
+h2 a:hover {
+  color: $text-color;
+  text-decoration: none;
+}
+
 /*
  * Overriding buttons
  */
