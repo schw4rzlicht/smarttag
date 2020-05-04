@@ -7,12 +7,6 @@ const ObservableInteger = require("./ObservableInteger.js");
 const Hashtag = require("./Hashtag.js");
 
 /*
- * Constants
- */
-
-const recursionDepth = 2;
-
-/*
  * Script
  */
 
@@ -24,6 +18,7 @@ $("#hashtagSearchForm").submit(event => {
     $(".alert").alert("close");
 
     let hashtag = $("#hashtag");
+    let recursionDepth = parseInt($("#recursionDepth").val());
 
     let sanitizedInput = hashtag.val().replace(/\W/g, "");
 
