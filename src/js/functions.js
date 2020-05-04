@@ -28,8 +28,12 @@ let startingHashtag;
 function getBucketHtml(bucketId) {
 
     let result = "<div id='bucket" + bucketId + "' class='card'>" +
-        "<div class='card-header'>" + buckets[bucketId].name + "</div>" +
-        "<div class='card-body'>";
+        "<div class='card-header' id='headingBucket" + bucketId + "'>" +
+        "<h2 class='mb-0'><button class='btn btn-link' type='button' data-toggle='collapse' " +
+        "data-target='#collapseBucket" + bucketId + "' aria-expanded='false' " +
+        "aria-controls='collapseBucket" + bucketId + "'>" + buckets[bucketId].name + "</button></h2></div>" +
+        "<div id='collapseBucket" + bucketId + "' class='collapse' aria-labelledby='headingBucket" + bucketId + "' " +
+        "data-parent='#buckets'><div class='card-body'>";
 
     if (buckets[bucketId].bucket.length > 0) {
         for (const hashtag of buckets[bucketId].bucket) {
@@ -39,7 +43,7 @@ function getBucketHtml(bucketId) {
         result += "<i>none</i>";
     }
 
-    return result + "</div></div>";
+    return result + "</div></div></div>";
 }
 
 function createBuckets(hashtags) {

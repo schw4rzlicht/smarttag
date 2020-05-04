@@ -57,12 +57,18 @@
             </form>
         </div>
         <div id="result" class="d-none">
+            <p>
+                <button type="button" class="btn btn-primary" id="retryButton">Try another hashtag!</button>
+            </p>
             <div class="card">
                 <div class="card-header">
                     <nav class="navbar navbar-expand-lg">
                         <div>Resulting hashtags</div>
                         <div>
                             <span id="clipboardMessage"></span>
+                            <button type="button" class="btn btn-secondary" id="shuffleButton"><i
+                                    class="fa fa-refresh"></i>
+                            </button>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-secondary" id="clipboardWithoutLinebreaks">
                                     <i class="fa fa-clipboard"></i>
@@ -83,9 +89,9 @@
                     <pre><samp id="resultingHashtags"></samp></pre>
                 </div>
             </div>
-            <div class="card-deck" id="buckets"></div>
-            <button type="button" class="btn btn-primary" id="shuffleButton">Shuffle!</button>
-            <button type="button" class="btn btn-secondary" id="retryButton">Try another hashtag!</button>
+            <p>
+            <h3>Found hashtags</h3></p>
+            <div class="accordion" id="buckets"></div>
         </div>
     </main>
 
