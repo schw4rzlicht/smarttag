@@ -10,7 +10,7 @@ const BUCKET_RANGES = [
     {name: "up to 1.000.000 uses", pick: 0.3, criteria: weight => 100000 < weight && weight <= 1000000},
     {name: "more than 1.000.000 uses", pick: 0.1, criteria: weight => 1000000 < weight}
 ];
-const RESULTING_HASHTAGS = 10; // TODO Make changeable
+const RESULTING_HASHTAGS = 10;
 
 const urlParams = new URLSearchParams(window.location.search);
 
