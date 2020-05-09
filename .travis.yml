@@ -11,5 +11,6 @@ deploy:
   keep_history: true
   local_dir: dist
   repo: schw4rzlicht/schw4rzlicht.github.io
+  target_branch: master
   on:
     branch: master
