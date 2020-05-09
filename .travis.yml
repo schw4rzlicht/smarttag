@@ -3,3 +3,13 @@ node_js: 12
 before_script:
   - npm install -g gulp-cli
 script: gulp buildProduction
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  local_dir: dist
+  repo: schw4rzlicht/schw4rzlicht.github.io
+  on:
+    branch: master
