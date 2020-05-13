@@ -148,6 +148,7 @@ h2 a:hover {
 }
 
 .github-fork-ribbon:after {
-  color: $text-color;
-  border-color: $text-color;
+  text-shadow: none;
+  color: $background-color;
+  border-color: $background-color;
 }
